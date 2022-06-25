@@ -2,15 +2,19 @@ from piece import Bishop, King, Rook, Pawn, Queen, Knight
 import time
 import pygame
 pygame.font.init()
+
 class Board:
+    """
+    class for game board
+    """
     rect=(113,113,525,525)
     startX,startY=rect[0],rect[1]
+
     def __init__(self,rows,cols):
         self.rows=rows
         self.cols=cols
         self.ready=False
         self.last=None
-        self.copy=True
         self.board=[[0 for y in range(cols)] for x in range(rows)]
         self.p1Name="Player 1"
         self.p2Name="Player 2"
@@ -22,7 +26,7 @@ class Board:
         self.startTime=time.time()
         self.turn='w'
 
-        # set up black and white pieces on the board
+        # place black and white pieces on the board
         self.board[0][0] = Rook(0, 0, "b")
         self.board[0][1] = Knight(0, 1, "b")
         self.board[0][2] = Bishop(0, 2, "b")
@@ -76,6 +80,7 @@ class Board:
         :param color: str
         :return: None
         """
+        # highlight the last move in blue
         if self.last and color == self.turn:
             y,x = self.last[0]
             y1,x1 = self.last[1]
@@ -85,13 +90,11 @@ class Board:
             xx1 = 4+self.startX+x1*self.rect[2]/8
             yy1 = 3+self.startY+y1*self.rect[3]/8
             pygame.draw.circle(win,(0,0,225),(xx1+32,yy1+30),34,4)
-        s=None
+        # draw board
         for i in range(self.rows):
             for j in range(self.cols):
                 if self.board[i][j] != 0:
                     self.board[i][j].draw(win,color)
-                    if self.board[i][j].isSelected:
-                        s=(i,j)
 
     def get_danger_moves(self,color):
         """
@@ -109,11 +112,10 @@ class Board:
 
     def is_checked(self,color):
         """
-        return if is checked
+        return if the current player is checked
         :param color: str
         :return: bool
         """
-        global win
         self.update_moves()
         danger_moves = self.get_danger_moves(color)
         king_pos = (-1,-1)
@@ -121,6 +123,7 @@ class Board:
             for j in range(self.cols):
                 if self.board[i][j] != 0 and self.board[i][j].king and self.board[i][j].color == color:
                     king_pos = (j,i)
+        # to check if king's pos is in the danger moves
         if king_pos in danger_moves:
             return True
         return False
@@ -146,7 +149,7 @@ class Board:
             if (col,row) in moves:
                 changed = self.move(prev,(row,col),color)
         else:
-            # if select an empty pos
+            # select a piece
             if prev == (-1,-1):
                 self.reset_selected()
                 if self.board[row][col] != 0:
@@ -159,41 +162,33 @@ class Board:
                         changed = self.move(prev,(row,col),color)
 
                 else:
-                    #  if clicked on the piece in the same color
+                    #  clicked on the piece in the same color
                     if self.board[row][col].color == color:
                         self.reset_selected()
-                        # castling, rook is selected and not moved, rook is going to the pos of king
+                        # castling, rook and king are selected but not moved, rook is going to the pos of king, click rook first
                         if self.board[prev[0]][prev[1]].rook and self.board[row][col].king:
                                 if self.board[prev[0]][prev[1]].moved == False and self.board[row][col].moved == False:
                                     castle = True
-                                    # rook is at the left side of king
+                                    # rook is on the left side of king
                                     dangerMoves = self.get_danger_moves(color)
                                     if prev[1]<col:
-                                        # to check if any piece between rook and king
+                                        # to check if any piece or danger moves between rook and king
                                         for j in range(prev[1]+1,col):
                                             if self.board[row][j] != 0 or (j,row) in dangerMoves:
                                                 castle = False
                                                 break
                                         if castle:
-                                            changed = self.move(prev,(row,3),color)
+                                            self.move(prev,(row,3),color)
                                             changed = self.move((row,col),(row,2),color)
-                                        if not changed:
-                                            self.board[row][col].selected=True
-                                    # rook is at the right side of king
+                                    # rook is on the right side of king
                                     else:
                                         for j in range(col+1,prev[1]):
                                             if self.board[row][j] != 0 or (j,row) in dangerMoves:
                                                 castle = False
                                                 break
                                         if castle:
-                                            changed = self.move(prev,(row,6),color)
+                                            self.move(prev,(row,6),color)
                                             changed = self.move((row,col),(row,5),color)
-                                        if not changed:
-                                            self.board[row][col].selected = True
-                                # select king if castle is not initiated
-                                else:
-                                    self.board[row][col].selected = True
-
         # to change the turn
         if changed:
             if self.turn == 'w':
@@ -216,7 +211,7 @@ class Board:
 
     def move(self,start,end,color):
         """
-        to move piece from start to end
+        to move piece from start pos to end pos
         :param start: tuple
         :param end: tuple
         :param color: str
@@ -224,6 +219,7 @@ class Board:
         """
         changed=True
         nBoard = self.board[:]
+        # to check special pieces
         if nBoard[start[0]][start[1]].pawn:
             nBoard[start[0]][start[1]].first = False
         elif nBoard[start[0]][start[1]].rook:
@@ -234,6 +230,7 @@ class Board:
         nBoard[start[0]][start[1]].change_pos((end[0],end[1]))
         # change piece
         nBoard[end[0]][end[1]] = nBoard[start[0]][start[1]]
+        # clear previous pos
         nBoard[start[0]][start[1]] = 0
         self.board =nBoard
         # if checked, reverse the move
@@ -246,26 +243,26 @@ class Board:
                 nBoard[end[0]][end[1]].moved = False
             elif nBoard[end[0]][end[1]].king:
                 nBoard[end[0]][end[1]].moved = False
-            # change position
+            # change position back
             nBoard[end[0]][end[1]].change_pos((start[0], start[1]))
-            # change piece
+            # change piece back
             nBoard[start[0]][start[1]] = nBoard[end[0]][end[1]]
+            # clear the pos
             nBoard[end[0]][end[1]] = 0
             self.board = nBoard
-        else:
-            self.reset_selected()
+
         # update move list and time for player after a move
         if changed:
+            self.last = [start,end]
+            # to check is pawn is promoted
             if nBoard[end[0]][end[1]].pawn:
                 if nBoard[end[0]][end[1]].promotion(end[0]):
                     nBoard[end[0]][end[1]] = Queen(end[0],end[1],color)
-        self.update_moves()
-        if changed:
-            self.last = [start,end]
+            # to update the timer
             if self.turn == 'w':
                 self.storedTime1 += (time.time()-self.startTime)
-            else:
+            elif self.turn == 'b':
                 self.storedTime2 += (time.time()-self.startTime)
             self.startTime=time.time()
-
+        self.update_moves()
         return changed
