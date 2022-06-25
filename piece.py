@@ -17,7 +17,6 @@ w_pawn = pygame.image.load(os.path.join("img", "white_pawn.png"))
 w_queen = pygame.image.load(os.path.join("img", "white_queen.png"))
 w_rook = pygame.image.load(os.path.join("img", "white_rook.png"))
 
-# prepare black and white pieces
 b = [b_bishop, b_king, b_knight, b_pawn, b_queen, b_rook]
 w = [w_bishop, w_king, w_knight, w_pawn, w_queen, w_rook]
 n = len(b)
@@ -36,7 +35,6 @@ class Piece:
 
     def __init__(self, row, col, color):
         """
-        t0 set up
         :param row: int
         :param col: int
         :param color: str
@@ -59,7 +57,7 @@ class Piece:
 
     def update_valid_moves(self,board):
         """
-        possible position that piece can be placed on
+        possible position where piece can be placed on the board
         :param board: matrix
         :return: None
         """
@@ -67,7 +65,7 @@ class Piece:
 
     def change_pos(self,pos):
         """
-        New position that piece will move to
+        New position that piece moves to
         :param pos: list (new position)
         :return: None
         """
@@ -76,12 +74,12 @@ class Piece:
 
     def draw(self,win,color):
         """
-        draw pieces on the board
+        draw piece on the board
         :param win: surface
         :param color: str
         :return: None
         """
-        # draw black or white on the board based on the row and col
+        # draw piece on the board based on the row and col
         if self.color == 'w':
             drawThis = W[self.img]
         else:
@@ -92,14 +90,10 @@ class Piece:
             pygame.draw.rect(win,(255,0,0),(x,y,62,62),4)
         win.blit(drawThis,(x,y))
 
-    def __str__(self):
-        """
-        :return: str
-        """
-        return str(self.col) + " " + str(self.row)
-
 class Bishop(Piece):
+
     img = 0
+
     def __init__(self,row,col,color):
         super().__init__(row,col,color)
 
@@ -176,7 +170,9 @@ class Bishop(Piece):
         return moves
 
 class King(Piece):
+
     img=1
+
     def __init__(self, row, col, color):
         super().__init__(row,col,color)
         self.king=True
@@ -250,9 +246,12 @@ class King(Piece):
         return moves
 
 class Knight(Piece):
+
     img=2
+
     def __init__(self,row,col,color):
         super().__init__(row,col,color)
+
     def valid_moves(self,board):
         """
         to get valid moves for knight
@@ -316,13 +315,20 @@ class Knight(Piece):
         return moves
 
 class Pawn(Piece):
+
     img=3
+
     def __init__(self,row,col,color):
         super().__init__(row,col,color)
         self.first=True
         self.pawn=True
 
     def promotion(self,row):
+        """
+        to check if pawn will be promoted
+        :param row: int
+        :return: bool
+        """
         if row == 0 or row == 7:
             return True
         return False
@@ -381,9 +387,12 @@ class Pawn(Piece):
         return moves
 
 class Queen(Piece):
+
     img=4
+
     def __init__(self,row,col,color):
         super().__init__(row,col,color)
+
     def valid_moves(self,board):
         """
         to check valid moves for Queen
@@ -493,11 +502,14 @@ class Queen(Piece):
         return moves
 
 class Rook(Piece):
+
     img=5
+
     def __init__(self,row,col,color):
         super().__init__(row,col,color)
         self.moved=False
         self.rook=True
+
     def valid_moves(self,board):
         """
         to check valid moves for Rook
