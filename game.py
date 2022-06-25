@@ -138,8 +138,7 @@ def end_screen(win, text):
                 pygame.quit()
                 quit()
                 run = False
-            elif event.type == pygame.KEYDOWN:
-                run = False
+
 
 
 
