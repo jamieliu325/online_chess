@@ -93,7 +93,7 @@ def threaded_client(conn,game):
                     else:
                         bo.time2 = 900 - (time.time()-bo.startTime) - bo.storedTime2
                 sendData=pickle.dumps(bo)
-            conn.sendall(sendData)
+                conn.sendall(sendData)
         except Exception as e:
             print(e)
 
