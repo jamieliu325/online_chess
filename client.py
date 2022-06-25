@@ -17,17 +17,22 @@ class Network:
     def connect(self):
         """
         connect to the address
-        :return: received data from socket
+        :return: data received from socket
         """
         # connect to the server
         self.client.connect(self.addr)
         return self.client.recv(4096*8)
 
     def disconnect(self):
+        """
+        close connection
+        :return: None
+        """
         self.client.close()
 
     def send(self,data,pick=False):
         """
+        send data to the server abd receive data from the server
         :param data: str
         :param pick: bool
         :return: str
@@ -41,11 +46,8 @@ class Network:
                     self.client.send(pickle.dumps(data))
                 else:
                     # to send encoded string
-                    print(data)
-                    print(str.encode(data))
                     self.client.send(str.encode(data))
                     reply=self.client.recv(4096*8)
-                    print(reply)
                 try:
                     reply=pickle.loads(reply)
                     break
