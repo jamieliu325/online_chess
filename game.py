@@ -139,9 +139,6 @@ def end_screen(win, text):
                 quit()
                 run = False
 
-
-
-
 def click(pos):
     """
     :return: pos (x, y) in col and row
