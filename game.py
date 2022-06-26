@@ -225,10 +225,12 @@ def main():
                     i, j = click(pos)
                     bo = n.send("select " + str(i) + " " + str(j) + " " + color)
             redraw_gameWindow(win, bo, p1Time, p2Time, color, bo.ready)
+
     # disconnected
     n.disconnect()
     bo = 0
     menu_screen(win)
+
 
 # starts game
 name = input("Please type your name: ")
