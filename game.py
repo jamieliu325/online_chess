@@ -171,9 +171,7 @@ def main():
 
     color = bo.start_user
     count = 0
-
     bo = n.send("name " + name)
-    clock = pygame.time.Clock()
     run = True
 
     while run:
