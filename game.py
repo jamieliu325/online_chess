@@ -123,7 +123,6 @@ def end_screen(win, text):
     :param text: str
     :return: None
     """
-
     font = pygame.font.SysFont("comicsans", 60)
     txt = font.render(text, 1, (255, 0, 0))
     win.blit(txt, (width / 2 - txt.get_width() / 2, 300))
@@ -161,7 +160,6 @@ def connect():
     global n
     n = Network()
     return n.board
-
 
 def main():
     global turn, bo, name
@@ -232,7 +230,7 @@ def main():
     bo = 0
     menu_screen(win)
 
-
+# starts game
 name = input("Please type your name: ")
 # set up window
 width = 750
