@@ -261,7 +261,7 @@ class Board:
             # to update the timer
             if self.turn == 'w':
                 self.storedTime1 += (time.time()-self.startTime)
-            if self.turn == 'b':
+            elif self.turn == 'b':
                 self.storedTime2 += (time.time()-self.startTime)
             self.startTime=time.time()
         self.update_moves()

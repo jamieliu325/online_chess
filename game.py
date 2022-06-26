@@ -76,8 +76,8 @@ def redraw_gameWindow(win, bo, p1, p2, color, ready):
     if int(p2 % 60) < 10:
         formatTime2 = formatTime2[:-1] + "0" + formatTime2[-1]
     try:
-        txt2 = font.render(bo.p1Name + "\'s Time: " + str(formatTime2), 1, (255, 255, 255))
-        txt1 = font.render(bo.p2Name + "\'s Time: " + str(formatTime1), 1, (255, 255, 255))
+        txt2 = font.render(bo.p2Name + "\'s Time: " + str(formatTime2), 1, (255, 255, 255))
+        txt1 = font.render(bo.p1Name + "\'s Time: " + str(formatTime1), 1, (255, 255, 255))
     except Exception as e:
         print(e)
     win.blit(txt2, (530, 10))
@@ -177,15 +177,15 @@ def main():
     run = True
 
     while run:
-        if not color == "s":
-            p1Time = bo.time1
-            p2Time = bo.time2
-            if count == 60:
-                bo = n.send("get")
-                count = 0
-            else:
-                count += 1
-            clock.tick(30)
+
+        p1Time = bo.time1
+        p2Time = bo.time2
+        # to send 'get' request to sever after each 30 counts
+        if count == 30:
+            bo = n.send("get")
+            count = 0
+        else:
+            count += 1
 
         try:
             redraw_gameWindow(win, bo, p1Time, p2Time, color, bo.ready)
